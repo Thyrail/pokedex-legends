@@ -27,6 +27,6 @@ USER nextjs
 
 EXPOSE 3201
 
-ENV PORT 3201
+ENV PORT=3201
 
 CMD ["node", "server.js"]
