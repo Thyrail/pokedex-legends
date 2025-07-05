@@ -1,0 +1,15 @@
+.Card-List {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2rem;
+    justify-content: center;
+    width: 100%;
+    max-width: 1400px;
+    padding: 2rem 1rem;
+    margin: 0 auto;
+
+    @media (max-width: 480px) {
+        gap: 1rem;
+        padding: 1rem 0.5rem;
+    }
+}
