@@ -1,0 +1,52 @@
+name: Build, Push, and Deploy Pokédex Legends
+
+on:
+  push:
+    branches:
+      - release
+
+jobs:
+  build-and-deploy:
+    name: Build, Push and Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Build and push Docker image
+        id: build
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: thyrail/pokedex-legends:${{ github.sha }}
+
+      - name: Checkout k8s-config repo
+        uses: actions/checkout@v4
+        with:
+          repository: Thyrail/thyrail-k8s-config
+          ssh-key: ${{ secrets.CONFIG_REPO_DEPLOY_KEY }}
+          ref: master
+
+      - name: Update deployment.yaml with new image digest
+        run: |
+          # Wir verwenden den unveränderlichen Digest für maximale Sicherheit
+          IMAGE_DIGEST="thyrail/pokedex-legends@${{ steps.build.outputs.digest }}"
+          echo "Updating to new image: ${IMAGE_DIGEST}"
+
+          # Dieser sed-Befehl erhält die Einrückung und aktualisiert die Zieldatei
+          sed -i 's|^\(\s*image:\s*\).*|\1'"${IMAGE_DIGEST}"'|' apps/pokedex-legends/deployment.yaml
+
+      - name: Commit and push manifest changes
+        run: |
+          git config --global user.name 'GitHub Action Bot'
+          git config --global user.email 'bot@github.com'
+          git add apps/pokedex-legends/deployment.yaml
+          git diff --staged --quiet || git commit -m "Deploy new image for pokedex-legends: ${{ github.sha }}"
+          git push origin master
