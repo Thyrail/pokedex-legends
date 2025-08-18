@@ -36,11 +36,9 @@ jobs:
 
       - name: Update deployment.yaml with new image digest
         run: |
-          # Wir verwenden den unveränderlichen Digest für maximale Sicherheit
           IMAGE_DIGEST="thyrail/pokedex-legends@${{ steps.build.outputs.digest }}"
           echo "Updating to new image: ${IMAGE_DIGEST}"
 
-          # Dieser sed-Befehl erhält die Einrückung und aktualisiert die Zieldatei
           sed -i 's|^\(\s*image:\s*\).*|\1'"${IMAGE_DIGEST}"'|' apps/pokedex-legends/deployment.yaml
 
       - name: Commit and push manifest changes
