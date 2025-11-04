@@ -44,6 +44,7 @@ jobs:
           sed -i 's|^\(\s*image:\s*\).*|\1'"${IMAGE_TAG}"'|' apps/pokedex-legends/deployment.yaml
 
       - name: Commit and push manifest changes
+        working-directory: tyranid-synapse-config
         run: |
           git config --global user.name 'GitHub Action Bot'
           git config --global user.email 'bot@github.com'
