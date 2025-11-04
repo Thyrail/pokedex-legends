@@ -25,7 +25,9 @@ jobs:
         with:
           context: .
           push: true
-          tags: thyrail/pokedex-legends:latest,thyrail/pokedex-legends:${{ github.sha }}
+          tags: |
+            thyrail/pokedex-legends:${{ github.sha }}
+            thyrail/pokedex-legends:latest
 
       - name: Checkout k8s-config repo
         uses: actions/checkout@v4
@@ -34,12 +36,12 @@ jobs:
           ssh-key: ${{ secrets.CONFIG_REPO_DEPLOY_KEY }}
           ref: master
 
-      - name: Update deployment.yaml with new image digest
+      - name: Update deployment.yaml to use :latest
+        working-directory: tyranid-synapse-config
         run: |
-          IMAGE_DIGEST="thyrail/pokedex-legends@${{ steps.build.outputs.digest }}"
-          echo "Updating to new image: ${IMAGE_DIGEST}"
-
-          sed -i 's|^\(\s*image:\s*\).*|\1'"${IMAGE_DIGEST}"'|' apps/pokedex-legends/deployment.yaml
+          IMAGE_TAG="thyrail/pokedex-legends:latest"
+          echo "Updating pokedex-legends deployment to use image: ${IMAGE_TAG}"
+          sed -i 's|^\(\s*image:\s*\).*|\1'"${IMAGE_TAG}"'|' apps/pokedex-legends/deployment.yaml
 
       - name: Commit and push manifest changes
         run: |
