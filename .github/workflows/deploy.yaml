@@ -35,6 +35,7 @@ jobs:
           repository: Thyrail/tyranid-synapse-config
           ssh-key: ${{ secrets.CONFIG_REPO_DEPLOY_KEY }}
           ref: master
+          path: tyranid-synapse-config
 
       - name: Update deployment.yaml to use :latest
         working-directory: tyranid-synapse-config
