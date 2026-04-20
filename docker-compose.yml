@@ -1,11 +1,23 @@
-
 services:
-  pokedex-legends:
-    build:
-      context: .
-      dockerfile: Dockerfile
+  app:
+    image: ${IMAGE_NAME}
     container_name: pokedex-legends
-    image: thyrail/pokedex-legends:latest
-    ports:
-      - "3201:3201"
     restart: always
+    environment:
+      - NODE_ENV=${NODE_ENV}
+
+    networks:
+      - proxy
+
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${ROUTER_NAME}.rule=Host(`${DOMAIN_NAME}`)"
+      - "traefik.http.routers.${ROUTER_NAME}.entrypoints=websecure"
+      - "traefik.http.routers.${ROUTER_NAME}.tls.certresolver=myresolver"
+      - "traefik.http.services.${ROUTER_NAME}.loadbalancer.server.port=${APP_PORT}"
+      - "traefik.docker.network=${NETWORK_NAME}"
+
+networks:
+  proxy:
+    external: true
+    name: ${NETWORK_NAME}

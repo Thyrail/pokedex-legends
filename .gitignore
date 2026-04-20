@@ -20,7 +20,8 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
-# Local environment 
+# Local environment
+.env
 .env*.local
 
 # Editor directories and files
