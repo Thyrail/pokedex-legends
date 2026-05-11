@@ -4,6 +4,7 @@ import { Footer } from "@/components/Footer/Footer";
 import { PokemonProvider } from "@/context/PokemonContext";
 import { ContentProtector } from "@/utils/ContentProtector/ContentProtector";
 import "./globals.scss";
+import Script from "next/script";
 
 export const metadata: Metadata = {
   title: "PokeDex Legends",
@@ -25,6 +26,11 @@ export default function RootLayout({
           <main>{children}</main>
           <Footer />
         </PokemonProvider>
+        <Script
+          src="https://stats.aisa-studios.de/analytics"
+          data-website-id="4d061078-9c8a-41f9-b628-648eca8bf067"
+          strategy="afterInteractive"
+        />
       </body>
     </html>
   );
